@@ -1,0 +1,24 @@
+node_modules/
+dist/
+.local/
+*.log
+public/mediapipe/
+public/models/*.task
+public/models/*.download
+
+# Local media has no confirmed redistribution license.
+test2DCharacter.png
+testVideo.gif
+
+# Credentials and machine-specific files.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+coverage/
+*.tsbuildinfo

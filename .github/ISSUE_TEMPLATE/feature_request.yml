@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest an improvement to Motion2D.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe an example workflow and the result you need.
+    validations:
+      required: true

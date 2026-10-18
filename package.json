@@ -1,0 +1,37 @@
+{
+  "name": "motion2d-web",
+  "private": true,
+  "version": "0.2.0",
+  "description": "Experimental browser motion capture and PNG character animation studio.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adonisglobal/motion2d-web.git"
+  },
+  "homepage": "https://github.com/adonisglobal/motion2d-web#readme",
+  "bugs": { "url": "https://github.com/adonisglobal/motion2d-web/issues" },
+  "engines": { "node": ">=24 <25" },
+  "keywords": ["motion-capture", "animation", "2d", "mediapipe", "png", "opentoonz"],
+  "type": "module",
+  "scripts": {
+    "predev": "node scripts/check-assets.mjs",
+    "dev": "vite --host 127.0.0.1",
+    "prebuild": "node scripts/check-assets.mjs",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --experimental-strip-types --test src/motion/*.test.ts src/video/*.test.ts src/character/*.test.ts",
+    "setup:assets": "node scripts/setup-assets.mjs"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "1.1.1",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.4"
+  }
+}

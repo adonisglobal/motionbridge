@@ -1,0 +1,260 @@
+Motion2D development roadmap
+Version: 0.2.0 experimental prototype
+
+This roadmap describes the current implementation and the next development
+stages. Planned features are not available unless explicitly listed as
+implemented. It is a working specification, not a release-date commitment.
+
+1. Product objective
+
+Create a browser-based workflow that turns a recorded human performance into
+editable 2D character animation. The workflow should let an animator inspect
+tracking, calibrate a source pose, prepare a PNG character, review retargeted
+motion, and eventually export an artifact verified in OpenToonz.
+
+The application should preserve the character's proportions rather than copy
+the performer's body shape. Confidence and missing observations should remain
+visible throughout the workflow. A usable preview and a valid export are
+separate milestones.
+
+2. Current architecture
+
+The current implementation is a React and TypeScript browser application built
+with Vite. There is no application backend, account system, or cloud project
+service. Browser video APIs decode local media, and a module worker runs the
+MediaPipe Holistic CPU/WASM pipeline. Canonical motion solving happens in the
+worker; the application renders tracking and PNG character previews.
+
+The source is organized into application UI, video sampling, worker/client
+communication, canonical motion processing, character rigging, and rendering.
+Model/runtime files are installed by a setup script and excluded from Git.
+
+Input media is processed on the device. The MediaPipe package separately
+discloses performance and utilization metrics sent to Google. Do not describe
+the dependency runtime as guaranteed offline or free of network traffic.
+
+3. Prototype 01: video and tracking — implemented
+
+3.1 Local video import
+
+- Accept browser-decodable MP4, WebM, MOV, and M4V files.
+- Limit input to 60 seconds and 250 MB.
+- Validate usable dimensions and duration; display decoder errors.
+- Retain the source video locally through a browser object URL.
+- GIF is not accepted as motion-video input in this prototype.
+
+3.2 Timestamp-based sampling
+
+- Analyze at a selected rate of 12, 24, or 30 samples per second.
+- Keep analysis sampling independent of source video frame rate.
+- Exclude the duration endpoint and avoid duplicate tail samples.
+- Resize analysis images to a maximum edge of 640 pixels.
+- Transfer one bitmap at a time to control memory use.
+- Allow cancellation and release decoder/worker resources afterward.
+
+3.3 Holistic tracking
+
+- Run the installed MediaPipe Holistic model in a module worker.
+- Collect pose, pose-world, face, hand, and facial blendshape observations.
+- Preserve raw values separately from cleaned landmarks.
+- Support raw, light, balanced, and smooth filtering presets.
+- Show body confidence without treating missing joints as reliable data.
+
+3.4 Tracking review
+
+- Show a video-aligned skeleton overlay.
+- Toggle face and hand overlays and compare raw/cleaned measurements.
+- Seek and step through the source timeline.
+- Show a body-confidence timeline and analysis progress.
+- Retain analyzed samples after cancellation.
+- Do not extend the final analyzed pose across unprocessed video.
+
+Prototype 01 acceptance boundary:
+A user can import a supported video, inspect timestamped tracking, cancel and
+restart analysis, and distinguish incomplete coverage or uncertain tracking.
+This stage does not prepare an OpenToonz project.
+
+4. Prototype 02: canonical motion and PNG retargeting — implemented
+
+4.1 Canonical skeleton
+
+- Derive 21 named joints and 14 bones from cleaned observations.
+- Apply source aspect ratio before measuring 2D directions.
+- Normalize joints relative to the pelvis and a fixed torso scale.
+- Store global and parent-local bone angles in radians.
+- Preserve per-joint/per-bone confidence and review flags.
+- Permit a short, explicitly flagged hold of up to 150 ms.
+- Mark longer gaps unavailable; invalidate a lost torso/root.
+- Treat foot contacts as candidates only, without inverse kinematics.
+
+4.2 Source calibration
+
+- Select an initial reliable reference pose where possible.
+- Fall back to the best-observed valid frame and flag an incomplete reference.
+- Allow the user to choose the current valid frame as the reference.
+- Clear calibration when the underlying analysis changes.
+
+4.3 Character rigs
+
+- Include a procedural character with 14 PNG parts.
+- Import separate PNG parts using conventional bone names.
+- Support manual assignment for unknown names.
+- Swap occupied imported assignments without dropping the other image.
+- Edit rest joints, imported-part pivot/tip anchors, and layer order.
+- Remove a selected part from the session with the hide control.
+- Enforce PNG size/dimension limits and resize large previews.
+
+4.4 Experimental single-image preparation
+
+- Seed rest joints inside the visible image bounds.
+- Allow manual repositioning of joints over the source image.
+- Generate geometric masks around the bones and recut after edits.
+- Explain the resulting gaps, overlaps, and clipping risks.
+
+This is not automatic semantic segmentation. It does not infer hidden body
+parts, separate clothing or hair, or paint pixels exposed by rotation.
+
+4.5 Retargeting and preview
+
+- Apply parent-local angular changes relative to the source reference.
+- Preserve the target rig's bone lengths using forward kinematics.
+- Move shoulder/hip attachments coherently with the torso.
+- Scale motion strength from zero to twice the source change.
+- At zero strength, retain the complete rest pose.
+- Offer in-place playback that fixes the root translation.
+- Hide parts with insufficient confidence instead of inventing certainty.
+- Synchronize source and character playback, seeking, and frame stepping.
+
+4.6 Motion JSON
+
+- Export motion2d-canonical schema version 1.
+- Include source metadata, coordinate units, and reference timestamp.
+- Include canonical frames and explicit analysis completion/coverage metadata.
+- Keep the export distinct from a saved character project or OpenToonz scene.
+
+Prototype 02 acceptance boundary:
+A permitted performance can drive the default or manually prepared PNG rig,
+with reviewable timing and confidence. The application exports canonical body
+motion JSON. It does not save rigs/projects, render an image sequence, or
+export an OpenToonz-importable animation package.
+
+5. Next stage: motion cleanup and foot stabilization — planned
+
+5.1 Manual correction
+
+- Let users inspect and adjust uncertain joint or bone values over time.
+- Define correction ranges and interpolation behavior explicitly.
+- Preserve original measurements and allow corrections to be removed.
+- Keep reference-pose changes predictable when corrections exist.
+- Provide an undo/redo model appropriate for animation editing.
+
+5.2 Foot contacts and inverse kinematics
+
+- Review contact candidates against visible source motion.
+- Add editable contact intervals before treating a candidate as a constraint.
+- Stabilize planted feet in character space with a defined IK solver.
+- Preserve limb lengths and handle unreachable targets without abrupt jumps.
+- Blend constraint entry/exit to reduce snapping.
+- Make in-place behavior and root translation interact predictably.
+
+Acceptance criteria:
+A short walking or squat sequence can be reviewed and corrected without
+unexplained foot sliding or bone-length changes. Occlusion and missed contacts
+must remain visible. Candidate detection alone does not satisfy this stage.
+
+6. Next stage: reusable projects and improved character preparation — planned
+
+6.1 Project persistence
+
+- Define a versioned project format containing rig, artwork, calibration,
+  source references, motion settings, corrections, and timeline state.
+- Distinguish embedded media from external references and document portability.
+- Validate imported files and report incompatible or incomplete projects.
+- Preserve schema migrations or provide clear version errors.
+- Make save/load round trips reproducible.
+
+6.2 Character editing
+
+- Improve joint placement, anchor editing, part visibility, and layer controls.
+- Make restoring a removed part and reverting edits straightforward.
+- Support reusable rig templates with explicit character-side conventions.
+- Review whether single-image segmentation or image repair is appropriate.
+- If a model or service is added, disclose its data flow, download size, and
+  separate license before presenting the feature as available.
+
+Acceptance criteria:
+A character and its calibration can be saved, closed, reopened, and used with
+the same motion without losing artwork, anchors, assignments, or edit state.
+
+7. Next stage: export and OpenToonz interoperability — planned
+
+7.1 Select an export contract
+
+- Verify OpenToonz's supported import formats against its official
+  documentation and an installed target version.
+- Decide whether the first supported path is a rendered PNG sequence, reusable
+  cutout levels, an exchange package, or another documented format.
+- Define frame rate, frame count, duration, canvas dimensions, transparency,
+  naming, coordinate transforms, and directory structure.
+- Separate a rendered animation export from an editable rig export.
+- Document the exact level of editability provided by each output.
+
+7.2 Build the exporter
+
+- Render deterministic frames at the selected output rate.
+- Preserve alpha and drawing order.
+- Define how missing or invalid motion is handled in exported frames.
+- Include only material the user is entitled to export.
+- Provide useful progress, cancellation, and error messages.
+- Package enough metadata and instructions to reproduce the import.
+
+7.3 Verify in OpenToonz
+
+- Import a real exported artifact into a clean OpenToonz scene.
+- Verify timing, frame count, transparency, canvas placement, and playback.
+- Check the promised editing workflow, if editable output is claimed.
+- Repeat with the default rig and an independently prepared PNG character.
+- Record the tested OpenToonz version and any required import steps.
+
+Acceptance criteria:
+A user can follow the published instructions and import the generated artifact
+into the documented OpenToonz version, with correct timing and appearance.
+Canonical JSON alone does not satisfy this milestone. Do not advertise
+OpenToonz export before this end-to-end verification is complete.
+
+8. Later extensions — exploratory
+
+Detailed facial animation, finger articulation, additional character styles,
+multi-view motion, alternative tracking backends, and broader browser support
+may be investigated after the core workflow is reliable. Each requires a
+specific scope, data model, dependency review, and acceptance test. These are
+not current feature commitments.
+
+9. Quality and release requirements
+
+- Keep application UI, error messages, source comments, and documentation in
+  English.
+- Run the automated motion/sampling/rendering tests and production build.
+- Add tests for new behavior where they protect meaningful guarantees.
+- Exercise actual browser import, inference, cancellation, calibration, rig
+  editing, synchronized playback, and export workflows.
+- Verify desktop and narrow layouts, keyboard labels, and visible error states.
+- Use test media with documented permission to redistribute.
+- Keep private media, generated files, secrets, and dependency caches outside
+  Git and public source archives.
+- Preserve third-party notices and verify model/runtime redistribution terms.
+- Publish accurate experimental status and known limitations.
+- Treat hosted-site publication, source publication, and versioned releases as
+  separate actions with separately verified results.
+
+The public repository should include setup instructions, an open-source
+license for original code, third-party notices, contribution guidance, a
+security-reporting policy, and reproducible automated checks.
+
+10. Work order
+
+The recommended order after Prototype 02 is: improve motion review and foot
+stabilization; establish project persistence and stronger rig editing; define
+and implement the export contract; verify the result in OpenToonz; then expand
+animation detail and supported environments. A future release may adjust this
+order based on reproduced user issues and contributor feedback.
