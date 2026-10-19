@@ -8,7 +8,7 @@ public/models/*.download
 
 # Local media has no confirmed redistribution license.
 test2DCharacter.png
-testVideo.gif
+testVideo.mp4
 
 # Credentials and machine-specific files.
 .env
