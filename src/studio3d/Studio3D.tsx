@@ -84,7 +84,7 @@ export default function Studio3D({ active }: { active: boolean }) {
 
   return <div className="studio3d">
     <header className="motion3d-header">
-      <a className="brand" href={import.meta.env.BASE_URL} aria-label="Motion workspace home"><span>motion<span className="brand-accent">2d</span><span className="brand-dot">.</span></span><span className="motion3d-brand-tag">3D STUDIO</span></a>
+      <a className="brand" href={import.meta.env.BASE_URL} aria-label="MotionBridge home"><span>motion<span className="brand-accent">bridge</span><span className="brand-dot">.</span></span><span className="motion3d-brand-tag">3D STUDIO</span></a>
       <span className="motion3d-local"><i /> ON-DEVICE INFERENCE</span>
     </header>
     <main className="motion3d-main">

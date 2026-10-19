@@ -309,9 +309,9 @@ export default function App() {
 
   return <div className="app-shell">
     <header className="topbar">
-      <a className="brand" href={import.meta.env.BASE_URL} aria-label="Motion2D home" dir="ltr">
+      <a className="brand" href={import.meta.env.BASE_URL} aria-label="MotionBridge home" dir="ltr">
         <svg width="31" height="31" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="m5 25 7-17 8 16 7-17M5 25h22" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" /><circle cx="12" cy="8" r="3" fill="currentColor" /><circle cx="20" cy="24" r="3" fill="currentColor" /></svg>
-        <span>motion<span className="brand-accent">2d</span><span className="brand-dot">.</span></span>
+        <span>motion<span className="brand-accent">bridge</span><span className="brand-dot">.</span></span>
       </a>
       <nav className="workflow" aria-label="Workflow"><a className={`step ${reference ? 'finished' : 'active'}`} href="#motion-source"><b>01</b> Capture motion</a><a className={`step ${reference ? 'active' : ''}`} href="#character-preview"><b>02</b> Animate character</a><span className="step" title="OpenToonz export is planned"><b>03</b> OpenToonz (planned)</span></nav>
       <div className="local-badge"><span className="status-dot" /> On-device processing <Icon name="shield" size={15} /></div>
@@ -398,7 +398,7 @@ export default function App() {
           {error && <div className="error-message" role="alert"><strong>Could not complete the operation</strong><p>{error}</p><button onClick={() => setError('')} aria-label="Dismiss error"><Icon name="close" size={16} /></button></div>}
         </div>
       </div>
-      <footer><span dir="ltr">MOTION2D <i> / </i> MADE FOR THE MOVEMENT.</span><span>Up next: foot locking and motion correction <span aria-hidden="true">↖</span></span></footer>
+      <footer><span dir="ltr">MOTIONBRIDGE <i> / </i> MADE FOR THE MOVEMENT.</span><span>Up next: foot locking and motion correction <span aria-hidden="true">↖</span></span></footer>
     </main>
   </div>;
 }

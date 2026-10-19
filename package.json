@@ -1,23 +1,27 @@
 {
-  "name": "motion2d-web",
+  "name": "motionbridge",
   "private": true,
   "version": "0.3.0",
-  "description": "Browser motion capture with independent 3D Blender and 2D PNG animation workspaces.",
+  "description": "Open-source browser motion capture for Blender 3D and PNG 2D animation, with GLB/FBX character import and animated GLB, BVH, and JSON export.",
+  "author": "adonisglobal (https://github.com/adonisglobal)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adonisglobal/motion2d-web.git"
+    "url": "https://github.com/adonisglobal/motionbridge.git"
   },
-  "homepage": "https://github.com/adonisglobal/motion2d-web#readme",
+  "homepage": "https://github.com/adonisglobal/motionbridge#readme",
   "bugs": {
-    "url": "https://github.com/adonisglobal/motion2d-web/issues"
+    "url": "https://github.com/adonisglobal/motionbridge/issues"
   },
   "engines": {
     "node": ">=24 <25"
   },
   "keywords": [
     "motion-capture",
+    "markerless-motion-capture",
     "animation",
+    "character-animation",
+    "retargeting",
     "3d",
     "blender",
     "bvh",
@@ -25,7 +29,8 @@
     "2d",
     "mediapipe",
     "png",
-    "opentoonz"
+    "computer-vision",
+    "open-source"
   ],
   "type": "module",
   "scripts": {

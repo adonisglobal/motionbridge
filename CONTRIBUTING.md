@@ -1,6 +1,6 @@
-# Contributing to Motion2D
+# Contributing to MotionBridge
 
-Motion2D is an experimental browser tool with a 3D/Blender workspace and an independent 2D/PNG workspace. Contributions that improve reproducibility, tracking review, rig editing, and clearly tested motion behavior are welcome.
+MotionBridge is an experimental browser tool with a 3D/Blender workspace and an independent 2D/PNG workspace. Contributions that improve reproducibility, tracking review, rig editing, and clearly tested motion behavior are welcome.
 
 ## Set up a development environment
 

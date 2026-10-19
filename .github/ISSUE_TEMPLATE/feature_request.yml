@@ -1,5 +1,5 @@
 name: Feature request
-description: Suggest an improvement to Motion2D.
+description: Suggest an improvement to MotionBridge.
 body:
   - type: textarea
     id: problem

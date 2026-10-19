@@ -1,4 +1,4 @@
-Motion2D development roadmap
+MotionBridge development roadmap
 Version: 0.3.0 experimental prototype
 
 This roadmap describes the current implementation and the next development

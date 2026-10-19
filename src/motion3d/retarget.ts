@@ -22,7 +22,7 @@ export function createDefaultSkeleton3D(): Skeleton3D {
     head: { x: 0, y: 0.15, z: 0 }, handL: { x: 0.12, y: 0, z: 0 }, handR: { x: -0.12, y: 0, z: 0 },
     footL: { x: 0, y: -0.04, z: 0.17 }, footR: { x: 0, y: -0.04, z: 0.17 },
   };
-  return { name: 'Motion2D humanoid', bones: Object.fromEntries(HUMANOID_BONES.map(name => [name, {
+  return { name: 'MotionBridge humanoid', bones: Object.fromEntries(HUMANOID_BONES.map(name => [name, {
     parent: HUMANOID_PARENTS[name], offset: offsets[name], restRotation: identity(),
     ...(ends[name] ? { endOffset: ends[name] } : {}),
   }])) as Skeleton3D['bones'] };

@@ -35,7 +35,7 @@ export function bakeModelClip3D(rig: CharacterRig3D, options: AnimatedModelOptio
   const tracks: THREE.KeyframeTrack[] = [new THREE.VectorKeyframeTrack(`${clone.root.uuid}.position`, times, translations)];
   for (const [bone, values] of rotations) tracks.push(new THREE.QuaternionKeyframeTrack(`${bone.uuid}.quaternion`, times, values));
   const clip = new THREE.AnimationClip(options.name || 'Captured motion', times[times.length - 1] ?? 0, tracks);
-  clone.root.name = clone.root.name || 'Motion2D character';
+  clone.root.name = clone.root.name || 'MotionBridge character';
   clone.root.userData.motionCapture = {
     format: 'motion2d-character-animation', version: 1, fps: options.fps,
     sourceStartMs: sampled.sourceStartMs, sourceEndMs: sampled.sourceEndMs,

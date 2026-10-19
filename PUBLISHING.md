@@ -1,8 +1,9 @@
 # Publishing the source on GitHub
 
-The source is prepared as Motion2D 0.3.0, an experimental prototype under MIT.
-Repository metadata targets `adonisglobal/motion2d-web`. Preparing this checkout
-does not create or publish a remote repository.
+MotionBridge 0.3.0 is a working, experimental foundation under MIT, ready for
+development and updates. The public project identity is `adonisglobal/motionbridge`.
+See [the identity and discoverability guide](docs/DISCOVERABILITY.md) for the
+title, description, repository topics, and website metadata boundaries.
 
 ## Before the first push
 
@@ -30,12 +31,17 @@ initialized and committed Git repository:
 
 ```sh
 gh auth status
-gh repo create adonisglobal/motion2d-web --public --source=. --remote=origin --push --description "Browser motion capture with independent Blender 3D and PNG 2D workspaces"
+gh api user --jq .login
+gh repo create adonisglobal/motionbridge --public --source=. --remote=origin --push --description "Open-source browser motion capture for Blender 3D and PNG 2D animation. Import GLB/FBX characters; export animated GLB, BVH, and motion JSON. A foundation ready to extend."
 ```
 
 Use a different owner/name only after updating the metadata in `package.json`
 and this guide. If the remote already exists, inspect it first; do not overwrite
 another repository or force-push its history.
+
+The authenticated owner and original project commit identities should be
+`adonisglobal`. Preserve all required third-party license notices independently
+of the project's maintainer attribution.
 
 ## Verify publication
 

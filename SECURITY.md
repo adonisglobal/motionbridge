@@ -1,6 +1,6 @@
 # Security policy
 
-Motion2D is an experimental browser application. Security fixes are maintained on the latest development branch on a best-effort basis; earlier prototype versions do not have a separate support or backport commitment.
+MotionBridge is an experimental browser application. Security fixes are maintained on the latest development branch on a best-effort basis; earlier prototype versions do not have a separate support or backport commitment.
 
 ## Report a vulnerability
 

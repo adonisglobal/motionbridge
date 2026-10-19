@@ -1,82 +1,90 @@
-# Motion2D
+# MotionBridge — Browser Motion Capture for Blender and 2D Animation
 
-Turn a recorded human performance into character animation in the browser, with separate 3D and 2D workspaces.
+[![Status: working foundation](https://img.shields.io/badge/status-working%20foundation-3a8c72)](https://github.com/adonisglobal/motionbridge#status-and-roadmap)
+[![CI](https://github.com/adonisglobal/motionbridge/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/adonisglobal/motionbridge/actions/workflows/ci.yml)
+[![Version: 0.3.0](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/adonisglobal/motionbridge)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/adonisglobal/motionbridge/blob/main/LICENSE)
+[![Node.js: 24](https://img.shields.io/badge/Node.js-24-417e38)](https://github.com/adonisglobal/motionbridge/blob/main/.nvmrc)
 
-Motion2D is an experimental React and TypeScript application. Version 0.3.0 adds a Three.js 3D workspace with a skinned humanoid, GLB/FBX character import, depth-aware body-motion solving, and animated GLB or BVH export for Blender. The original PNG cutout workspace remains available in the **2D** tab. It is intended for experimentation and development, rather than production animation work.
+**Turn a recorded human performance into character animation in your browser.** MotionBridge combines video motion capture, pose estimation, and motion retargeting in two independent workspaces: **3D animation for Blender** and **2D PNG cutout animation**.
 
-**OpenToonz export is still planned.** The 2D workspace downloads motion JSON; it does not export an OpenToonz scene, animation level, or rendered image sequence. The 3D workspace exports Blender-compatible GLB and BVH files separately.
+This is a working open-source foundation, maintained by [adonisglobal](https://github.com/adonisglobal) and ready for further development, testing, and updates. Version 0.3.0 provides a usable capture-to-export pipeline with documented limitations. It remains experimental; animation cleanup and further validation are expected before production use.
 
-![Motion2D 3D workspace with the generated motion example](docs/interface3d.jpg)
+Built with **TypeScript, React, Three.js, and MediaPipe**. The public distribution is source code; model/runtime downloads and local test media are excluded.
 
-## What works today
+![MotionBridge 3D character preview with the generated motion example](docs/interface3d.jpg)
 
-- Open the default **3D / Blender** workspace and try generated motion without importing a recording.
-- Preview a skinned humanoid or import a self-contained GLB/FBX character with automatic and manual bone mapping.
-- Transfer estimated 3D body rotations while preserving target proportions, and export the animated character as GLB or its skeleton motion as BVH.
-- Keep a 3D JSON review archive with source timing, confidence, and calibration information.
-- Switch to the independent **2D / PNG** workspace for the original cutout-animation workflow below.
-- Import a browser-decodable video and analyze it at 12, 24, or 30 samples per second.
-- Review synchronized video, body/hand/face overlays, and a body-confidence timeline.
-- Compare raw landmarks with configurable motion smoothing.
-- Calibrate a source reference pose and apply relative bone rotations to a 14-part PNG character.
-- Use the included procedural character, import separate PNG parts, or try an experimental cutout from one PNG.
-- Edit rest joints, imported-part pivots and tips, part assignments, and drawing order.
-- Adjust motion strength, keep the character in place, and preview it with the source playback controls.
-- Download canonical body-motion JSON, including incomplete-analysis metadata when analysis is cancelled.
+## What you can do
 
-The workspaces keep separate videos, analysis settings, references, and characters within the current page session. Switching tabs pauses hidden playback; it does not transfer motion between them. Reloading the page discards both sessions.
+### 3D / Blender
+
+- Analyze a local video and review synchronized source playback, body tracking, confidence, and a skinned character preview.
+- Use the included humanoid or import a self-contained, skinned **GLB or FBX** model with automatic and manual bone mapping.
+- Retarget estimated body rotations while preserving the target model's proportions. Adjust calibration, smoothing, motion strength, and horizontal travel.
+- Export an **animated GLB** containing the character, skin, and baked animation, or **BVH** skeleton motion for Blender.
+- Save a **3D JSON** archive containing source timing, confidence, reference pose, calibration, and target skeleton information.
+- Try a six-second built-in motion example without providing a video.
+
+### 2D / PNG
+
+- Analyze video with body, hand, and face tracking overlays; compare raw landmarks and smoothed motion.
+- Animate the included 14-part character, import separate PNG parts, or try an experimental cutout from a single PNG.
+- Edit rest joints, part assignments, pivots, bone tips, and drawing order.
+- Calibrate a reference pose, adjust motion strength and in-place playback, and download canonical body-motion JSON.
+
+**OpenToonz export is planned.** The 2D workspace does not yet export an OpenToonz scene, animation level, rendered image sequence, or reusable character project. Its JSON download is motion data.
+
+The workspaces keep separate videos, settings, references, and characters. Switching tabs pauses hidden playback and preserves the current session. Reloading the page discards both sessions; project save/load is not implemented.
 
 ## Quick start
 
-Install [Node.js 24](https://nodejs.org/) with npm, then run these commands from the project directory:
+Install [Node.js 24](https://nodejs.org/) with npm, then run:
 
 ```sh
+git clone https://github.com/adonisglobal/motionbridge.git
+cd motionbridge
 npm ci
 npm run setup:assets
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173/` in a current desktop Chromium browser. This is the browser family used for development verification; other browsers may differ in codec and worker support.
+Open `http://127.0.0.1:5173/` in a current desktop Chromium browser. This is the browser family used for verification; codec and worker support may differ elsewhere. The 3D preview requires WebGL and hardware acceleration. Blender is needed only to use or independently verify exported animation.
 
-The 3D preview also requires WebGL and hardware acceleration. Select **Try built-in motion** for a six-second synthetic example: 144 generated landmark samples pass through the real 3D solver at 24 samples per second. This demonstrates the motion and export pipeline; it is not a recorded performance or a MediaPipe inference result.
+For an immediate preview, select **Try built-in motion** in the default **3D** tab. Its 144 generated landmark samples pass through the real 3D solver at 24 samples per second. This is a synthetic example, not a recording or a MediaPipe inference result.
 
-`setup:assets` copies the installed MediaPipe WASM runtime into `public/mediapipe/wasm/` and downloads the official versioned Holistic model into `public/models/`. The model download is approximately 14 MB, in addition to the installed runtime files. The script reuses a model only when its SHA-256 digest matches the pinned version, and replaces a corrupt cache after verifying the download. npm installation and the initial model download require an internet connection.
+### Local assets
 
-The generated runtime and model files are excluded from Git. Run `npm run setup:assets` after a clean checkout and after changing the MediaPipe dependency. Development and production builds check for these assets and the model's digest, and stop with setup instructions when validation fails.
+`setup:assets` copies the installed MediaPipe WASM runtime into `public/mediapipe/wasm/` and downloads the official, versioned Holistic model into `public/models/`. The model is approximately 14 MB. Installation and the initial download require an internet connection.
+
+The script verifies the model against a pinned SHA-256 digest, reuses a matching cache, and verifies a replacement before replacing an invalid cache. Generated runtime/model files are excluded from Git. Run setup after a clean checkout or a MediaPipe dependency change. Development and production builds check the assets and stop with setup instructions if validation fails.
 
 ## Animate in 3D and export to Blender
 
-1. Stay in the **3D** tab. Use **Try built-in motion**, or choose a local video, acknowledge the MediaPipe disclosure, and select **Analyze 3D motion**.
-2. Keep the **Studio humanoid**, or use **Import GLB / FBX** with a skinned, self-contained humanoid model. Check its facing direction and the **Bone mapping and calibration** panel.
-3. Review playback and tracking quality. **Follow captured body pose** is the default mapping; the reference calibrates facing and starting position. For a matching T-pose/A-pose reference, **Map reference to model bind pose** is another option.
-4. Set the export range and output FPS. **Download animated GLB** includes the current model, skin, and baked animation for Blender's glTF importer. **Download Blender BVH** contains an animated skeleton and no character mesh.
-5. Save the 3D motion JSON alongside the animation to retain confidence and source metadata.
+1. In **3D**, choose a local video, acknowledge the MediaPipe disclosure, and select **Analyze 3D motion**. Use a short, clearly lit recording of one person with the whole body visible.
+2. Keep the **Studio humanoid**, or select **Import GLB / FBX**. Use a skinned humanoid with embedded resources, then check facing direction and **Bone mapping and calibration**. Unsupported compression or missing external textures may require re-exporting the model.
+3. Review tracking and playback. **Follow captured body pose** is the default; the reference calibrates facing and starting position. **Map reference to model bind pose** is available when the recording contains a matching T-pose/A-pose.
+4. Choose the export range and output FPS. **Download animated GLB** includes the model and animation for Blender's glTF importer. **Download Blender BVH** exports an animated skeleton without a mesh.
+5. Save the 3D JSON alongside the animation to retain confidence and source metadata.
 
-See [the 3D and Blender guide](docs/3D_WORKFLOW.md) for model preparation, import settings, export validation, and reproducible Blender checks. Single-camera depth is an estimate; global depth travel, foot locking, facial animation, and finger retargeting are not implemented. In-place 3D motion locks horizontal travel while retaining vertical movement such as a squat.
+In-place 3D motion locks horizontal travel while preserving vertical movement such as a squat. Single-camera depth is an estimate; global depth travel, foot locking, facial animation, and finger retargeting are not implemented. Long tracking gaps cannot be reconstructed by increasing the output FPS. Uncertain samples require an explicit export choice; unavailable tracking is not silently filled across long gaps.
+
+See the [3D and Blender workflow](docs/3D_WORKFLOW.md) for model preparation, calibration, export settings, and reproducible Blender checks.
 
 ## Try a 2D performance
 
-Select the **2D** tab first. Its video, reference pose, and PNG rig are independent of the 3D workspace.
+Select **2D** first; its video and PNG rig are independent of the 3D workspace.
 
-1. Choose a short video with one person, good lighting, and the whole body visible. MP4 with H.264 is a useful starting point; WebM and MOV depend on browser codec support. Files must be no longer than 60 seconds and no larger than 250 MB.
-2. Start with 12 analysis samples per second and Balanced smoothing. The selected sample rate is independent of the video's original frame rate. Increasing it cannot recover motion absent from the source.
-3. Read the MediaPipe privacy disclosure and select its acknowledgment checkbox, then select **Analyze motion**. Analysis runs in a worker and can take longer than playback. Cancelling retains the samples already processed; restarting performs a fresh analysis.
-4. Inspect the tracking and switch between **Cleaned** and **Raw** views. Use the confidence timeline to seek to uncertain regions.
-5. Seek to a clear neutral pose and choose **Use current frame as reference**. An automatic reference is selected initially; an incomplete reference is marked for review.
-6. Open the character preview and use either playback control to review the same source time. Adjust **Motion strength** or **In place** as needed.
-7. Select **Save motion JSON** to download the canonical motion data.
+1. Choose a video no longer than **60 seconds** and no larger than **250 MB**. MP4/H.264 is a useful starting point; WebM and MOV depend on browser codecs. These video limits also apply to 3D. Convert GIFs to a browser-decodable video first.
+2. Start with **12 samples per second** and **Balanced** smoothing. Available analysis rates are 12, 24, and 30 samples per second. Sampling faster cannot recover motion absent from the original video.
+3. Acknowledge the MediaPipe privacy disclosure and select **Analyze motion**. Processing runs in a worker and may take longer than playback. Cancellation retains processed samples; restarting analyzes afresh.
+4. Compare **Cleaned** and **Raw** tracking and use the confidence timeline to inspect uncertain regions.
+5. Seek to a clear neutral pose and choose **Use current frame as reference**. An initial reference is selected automatically; an incomplete reference is marked for review.
+6. Review the character alongside source playback and adjust **Motion strength** or **In place**.
+7. Select **Save motion JSON** to download canonical motion data.
 
-Some interface wording may evolve during the prototype. GIF is not supported as a motion-video input; convert a GIF to a browser-decodable video first.
+### Prepare a 2D character
 
-## Prepare a 2D character
-
-### Included character
-
-The default mint-colored character is drawn by the application and split into PNG parts in the browser. It is useful for testing without obtaining external artwork.
-
-### Separate PNG parts
-
-Choose **Import PNG parts** to replace parts of the current character. Use these filenames for automatic bone assignment:
+The default mint character is generated by the application as PNG parts. For custom artwork, choose **Import PNG parts** and use these filenames for automatic assignment:
 
 ```text
 torso.png       head.png
@@ -86,44 +94,33 @@ thigh_L.png     shin_L.png    foot_L.png
 thigh_R.png     shin_R.png    foot_R.png
 ```
 
-Left and right refer to the character's own sides. Names are case-insensitive and separators are ignored. `body.png` is also recognized as the torso. Other filenames can be assigned manually in **Edit joints**. Import up to 14 parts at once; parts not replaced retain their current artwork.
+Left and right refer to the character's own sides. Matching ignores case and separators; `body.png` also maps to the torso. Import up to 14 parts at once. Unreplaced parts keep their artwork, and other filenames can be assigned in **Edit joints**.
 
-In **Edit joints**, place the character's rest joints, select a part, and adjust its pivot and bone tip. These anchors define how the image follows the bone. Check the part assignment and drawing order before previewing motion. Reassigning a part to an occupied bone swaps imported parts instead of discarding the other imported image. **Hide this part** removes it from the current session; reimport it or reset the character to restore it.
+Use **Edit joints** to place rest joints, adjust each part's pivot and bone tip, and check assignments and drawing order. Assigning a part to an occupied bone swaps imported parts. **Hide this part** removes it from the session; reimport it or reset the character to restore it.
 
-PNG files must be smaller than 10 MB, at most 4096 pixels per side, and at most 12 megapixels. Imported images are reduced to a maximum edge of 1024 pixels for the prototype preview.
+Each PNG must be smaller than 10 MB, at most 4096 pixels per side, and at most 12 megapixels. Preview images are reduced to a maximum edge of 1024 pixels.
 
-### Single PNG image
+For **Single PNG**, place rest joints over the image and select **Apply cutout and preview**. This uses geometric masks around the bones; it does not identify parts with AI or reconstruct hidden artwork. Gaps, overlap, and clipping are expected. Separately drawn parts offer more control. Neither PNG artwork nor a reusable rig project is included in the motion JSON download.
 
-Choose **Single PNG**, then adjust the rest joints over the image. Select **Apply cutout and preview**, or recut after editing the joints.
+### 2D motion data
 
-This mode uses geometric masks around manually positioned bones. It does not identify body parts with AI, reconstruct hidden artwork, or fill areas exposed by movement. Gaps, overlaps, clipped clothing, and hair artifacts are expected. Separately drawn parts provide more control.
+The existing format identifier remains `motion2d-canonical`, with `schemaVersion: 1`. Downloads contain source dimensions and filename, duration, analysis sample rate, reference timestamp, canonical frames, and analysis coverage. Review filenames before sharing exports.
 
-**The 2D rig, images, and motion are held in the current browser session.** There is no 2D project save/load or PNG-rig export yet. Reloading the page discards the session; the 2D motion JSON download does not contain a reusable character project.
+Frames include timestamps, root position in source-image-height units, pelvis-relative joints normalized by a fixed reference torso length, global and parent-local angles in radians, confidence, validity/review flags, and foot-contact candidates. X points right and Y downward. Retargeting applies changes relative to the reference while preserving target bone lengths.
 
-## 2D motion data
+Short missing observations may be held for up to 150 ms and flagged for review; longer gaps become unavailable. Low-confidence parts can disappear during preview. Foot-contact values are heuristic candidates, without foot locking or inverse kinematics. Face and hand landmarks are available for inspection; detailed facial and finger animation is not retargeted. The JSON schema remains experimental.
 
-The download uses `format: "motion2d-canonical"` and `schemaVersion: 1`. It contains source dimensions, duration, analysis sample rate, the reference timestamp, canonical frames, and analysis coverage. The source filename is included, so review it before sharing the file.
+## Validation
 
-Each canonical frame includes:
+Version 0.3.0 has been checked with **70 automated tests**, a production build, and independent **Blender 5.1.1** interoperability checks for BVH, animated GLB, and FBX roundtrips.
 
-- A timestamp in milliseconds and a root position in source-image-height units.
-- Pelvis-relative joints normalized by a fixed reference torso length.
-- Global and parent-local bone angles in radians, with per-joint and per-bone confidence.
-- Validity, review flags, and foot-contact candidates.
+A real-video browser test used a **13-second recording at 5 source FPS** and a separate, simple humanoid created in Blender. Its **17 bones** mapped automatically; analysis produced **312 valid samples at 24 samples per second**, with no samples flagged for review. GLB, BVH, and JSON exports were compared across all 312 output poses in Blender, including skin deformation.
 
-The coordinate axes are X to the right and Y downward. Retargeting applies changes in parent-local angles relative to the chosen reference while preserving the target character's bone lengths. Short missing observations may be held for up to 150 ms and flagged for review; longer gaps become unavailable. Low-confidence parts can disappear during preview.
+These checks establish a working workflow and export consistency. They do not measure capture accuracy against 3D ground truth or guarantee results for other recordings and models. A 24 FPS export cannot add performance detail missing from a 5 FPS recording. Local test videos, models, and results are excluded from the source distribution.
 
-Foot-contact values are heuristic candidates. They do not lock the feet or perform inverse kinematics. Face and hand landmarks are available for inspection, but detailed finger and facial animation are not retargeted to the character. The JSON format is experimental and may change before a stable release.
+## Development
 
-## Privacy and network behavior
-
-Motion2D reads selected video, PNG, GLB, and FBX files through browser APIs and performs motion processing on the device. The application does not implement a media-upload endpoint or a project cloud service. 3D model imports must embed their resources; external texture and buffer URLs are blocked.
-
-The installed MediaPipe Tasks package states that input data remains on the device, and also discloses that its APIs send performance and utilization metrics to Google. See the package's [privacy notice](https://github.com/google-ai-edge/mediapipe#privacy-notice) and [Google's Privacy Policy](https://policies.google.com/privacy). Motion2D therefore does not promise zero network traffic or a fully offline dependency runtime. The interface requires acknowledgment of this disclosure before analysis. Review this dependency behavior before using sensitive material or deploying the application for others.
-
-See [third-party notices](THIRD_PARTY_NOTICES.md) for dependency and model information. Downloaded runtimes, models, and user-supplied artwork are governed by their own terms; the project license does not replace them.
-
-## Development and validation
+After completing the quick start:
 
 ```sh
 npm test
@@ -131,53 +128,44 @@ npm run build
 npm run preview
 ```
 
-`npm test` uses Node's built-in test runner for video sampling, smoothing, 2D/3D motion solving, retargeting, PNG transforms, humanoid mapping, and GLB/BVH export behavior. The build runs TypeScript checking and creates `dist/`. The preview server normally opens at `http://127.0.0.1:4173/`.
+Tests cover video sampling, smoothing, 2D/3D solving and retargeting, PNG transforms, humanoid mapping, and GLB/BVH export. The build runs TypeScript checking and creates `dist/`. Preview normally uses `http://127.0.0.1:4173/`.
 
-With Blender installed, `npm run test:blender` runs the independent BVH, animated
-GLB, and FBX roundtrip checks. See the [3D guide](docs/3D_WORKFLOW.md#reproduce-the-blender-checks)
-for executable discovery and individual verification commands.
+With Blender installed, run:
 
-Automated tests do not establish browser codec support or visual tracking quality. For browser changes, also test real-video analysis, cancellation, calibration, character import/editing, playback, exports, and a narrow viewport in the affected workspace. The 3D guide includes optional headless Blender interoperability checks with generated fixtures; these do not replace a real-video browser test. See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-The main source areas are:
-
-```text
-src/app/         Application state and source-video interface
-src/video/       Video decoding, timestamp sampling, and frame lookup
-src/tracking/    Worker messages and client lifecycle
-src/workers/     MediaPipe inference worker
-src/motion/      Smoothing, canonical skeleton, retargeting, contacts
-src/character/   PNG rigs, parts, and rendering
-src/ui/          Character editor, tracking overlay, and styles
-src/studio3d/    Independent 3D source, analysis, calibration, and export UI
-src/motion3d/    Spatial body solve, quaternions, retargeting, and generated demo
-src/character3d/ Skinned models, bone mapping, and animated GLB export
-src/ui3d/        Interactive Three.js character preview
-src/export3d/    BVH generation, resampling, and 3D JSON archive
-blender/         BVH import helper
-scripts/         Local model/runtime setup and asset checks
+```sh
+npm run test:blender
 ```
+
+See [Blender check setup](docs/3D_WORKFLOW.md#reproduce-the-blender-checks) for executable discovery and individual commands. Automated checks do not replace browser tests for video codecs, tracking quality, cancellation, import/editing, playback, exports, and responsive layout. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+The original 2D implementation lives in `src/motion/`, `src/character/`, and `src/ui/`. The independent 3D workflow lives in `src/studio3d/`, `src/motion3d/`, `src/character3d/`, `src/ui3d/`, and `src/export3d/`. Shared video decoding, tracking client, and inference worker code are in `src/video/`, `src/tracking/`, and `src/workers/`. `blender/` contains the BVH import helper; `scripts/` contains asset setup and interoperability checks.
+
+## Privacy and network behavior
+
+MotionBridge reads selected video, PNG, GLB, and FBX files through browser APIs and processes motion on the device. The application implements no media-upload endpoint or project cloud service. Imported 3D models must embed their resources; external texture and buffer URLs are blocked.
+
+The installed MediaPipe Tasks package states that input data remains on the device, and also discloses that its APIs send performance and utilization metrics to Google. Read its [privacy notice](https://github.com/google-ai-edge/mediapipe#privacy-notice) and [Google's Privacy Policy](https://policies.google.com/privacy). The application requires acknowledgment before analysis and does not promise zero network traffic or a fully offline dependency runtime. Review this behavior before using sensitive material or deploying for others.
+
+Downloaded runtimes, models, and user-supplied artwork have their own terms. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); the project license does not replace those terms.
 
 ## Static hosting
 
-The build can be served by a static HTTP server. Use HTTPS for public deployments, serve `.wasm` files with the appropriate MIME type, and retain the model and runtime files produced in `dist/` alongside the application.
-
-For a repository subpath, set Vite's base when building, for example:
+The build can be served by a static HTTP server. Use HTTPS for public deployments, serve `.wasm` files with the appropriate MIME type, and retain the generated model/runtime files alongside the application. For a repository subpath:
 
 ```sh
-npm run build -- --base=/motion2d-web/
+npm run build -- --base=/motionbridge/
 ```
 
-The worker resolves model and runtime URLs from this base. Serving `index.html` directly through `file://` is not supported. This repository does not automatically publish a website or create a GitHub release when pushed.
-
-Before distributing a hosted or binary build, review the separate model terms described in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The source repository excludes that binary. For source publication steps, see [PUBLISHING.md](PUBLISHING.md).
+The worker resolves assets from this base. Opening `index.html` with `file://` is unsupported. Pushing this repository does not automatically deploy a website or distribute binaries. Review the separate model terms before distributing a hosted or packaged build. See [PUBLISHING.md](PUBLISHING.md) for source publication.
 
 ## Status and roadmap
 
-Version 0.3.0 is experimental and adds the 3D/Blender workflow alongside the existing 2D prototype. Planned work includes foot stabilization, motion corrections, project persistence, better character preparation, and 2D export verified in OpenToonz. See [PLAN.txt](PLAN.txt) for implementation boundaries and acceptance criteria.
+**A basic, working foundation for continued development.** The current focus is reliable video-to-character motion transfer, with Blender as the primary 3D workflow and the existing 2D workflow kept independent.
+
+Next areas include foot stabilization, motion corrections, project persistence, easier character preparation, broader recording/model coverage, and 2D export verified in OpenToonz. See [PLAN.txt](PLAN.txt) for scope and acceptance criteria. Planned features are not promises of a release date.
 
 ## Contributing and license
 
-Contributions are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md), use the repository issue templates for bugs and feature proposals, and follow [SECURITY.md](SECURITY.md) for security reports.
+Maintained by **[adonisglobal](https://github.com/adonisglobal)**. Contributions, reproducible bug reports, model-compatibility findings, documentation improvements, and focused feature proposals are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md), use the [issue templates](https://github.com/adonisglobal/motionbridge/issues/new/choose), and follow [SECURITY.md](SECURITY.md) for security reports.
 
-Original project code is available under the [MIT License](LICENSE). Do not add sample videos, artwork, model files, or other third-party material unless its redistribution terms and attribution are documented. Local test media is intentionally excluded from the public source package.
+Original project code is available under the [MIT License](LICENSE). Add third-party media or models only when redistribution terms and attribution are documented. Personal and local test media are intentionally excluded from the public source package.
