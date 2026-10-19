@@ -7,6 +7,11 @@ MediaPipe, or OpenToonz is implied.
 
 ## Runtime dependencies
 
+- **Three.js** (0.186.1): MIT, the Three.js authors. Used only by the separate 3D
+  workspace, including its loaders, controls, and glTF exporter. See the included
+  notice in `public/third-party/Three-LICENSE.txt` and the
+  [upstream license](https://github.com/mrdoob/three.js/blob/master/LICENSE).
+
 - **MediaPipe Tasks Vision** (`@mediapipe/tasks-vision`, 1.1.1): Apache-2.0,
   Google LLC and the MediaPipe authors. See the [upstream repository and license](https://github.com/google-ai-edge/mediapipe)
   and the copy in [public/third-party/Apache-2.0.txt](public/third-party/Apache-2.0.txt).
@@ -53,4 +58,7 @@ Use media you have permission to process and share. Local test images, GIFs,
 videos, screenshots, and motion captures are excluded from the repository; their
 presence on a developer's machine does not grant redistribution rights.
 
-OpenToonz export is planned. No OpenToonz code or binaries are included.
+OpenToonz export is planned. No OpenToonz or Blender binaries are included.
+The optional Blender Python helper and verification scripts use the user's
+installed Blender. Original procedural 3D geometry and example motion are
+included under the project MIT license; they use no external model or video.

@@ -1,5 +1,5 @@
 Motion2D development roadmap
-Version: 0.2.0 experimental prototype
+Version: 0.3.0 experimental prototype
 
 This roadmap describes the current implementation and the next development
 stages. Planned features are not available unless explicitly listed as
@@ -8,9 +8,10 @@ implemented. It is a working specification, not a release-date commitment.
 1. Product objective
 
 Create a browser-based workflow that turns a recorded human performance into
-editable 2D character animation. The workflow should let an animator inspect
-tracking, calibrate a source pose, prepare a PNG character, review retargeted
-motion, and eventually export an artifact verified in OpenToonz.
+character animation. The independent 3D workspace supports skinned humanoids
+and Blender export; the 2D workspace supports PNG cutout animation. Both should
+let an animator inspect tracking, calibrate motion, and review retargeting.
+Verified OpenToonz export remains a future 2D milestone.
 
 The application should preserve the character's proportions rather than copy
 the performer's body shape. Confidence and missing observations should remain
@@ -23,11 +24,15 @@ The current implementation is a React and TypeScript browser application built
 with Vite. There is no application backend, account system, or cloud project
 service. Browser video APIs decode local media, and a module worker runs the
 MediaPipe Holistic CPU/WASM pipeline. Canonical motion solving happens in the
-worker; the application renders tracking and PNG character previews.
+worker. The 2D path solves canonical angles in the worker; the separate 3D
+integration solves spatial body rotations from returned pose-world landmarks
+and renders skinned characters with Three.js.
 
 The source is organized into application UI, video sampling, worker/client
 communication, canonical motion processing, character rigging, and rendering.
 Model/runtime files are installed by a setup script and excluded from Git.
+The default 3D tab and the original 2D tab keep independent media, analysis,
+settings, references, and characters. Sessions are not persisted on reload.
 
 Input media is processed on the device. The MediaPipe package separately
 discloses performance and utilization metrics sent to Google. Do not describe
@@ -138,9 +143,62 @@ with reviewable timing and confidence. The application exports canonical body
 motion JSON. It does not save rigs/projects, render an image sequence, or
 export an OpenToonz-importable animation package.
 
-5. Next stage: motion cleanup and foot stabilization — planned
+5. Prototype 03: 3D characters and Blender workflow — implemented, experimental
 
-5.1 Manual correction
+5.1 Spatial motion solve
+
+- Run a dedicated 3D solver over MediaPipe pose-world and image observations.
+- Use a 17-bone humanoid with parent-local, sign-continuous quaternions.
+- Retain confidence, held-observation flags, and validity/review information.
+- Permit flagged holds up to 150 ms; longer missing observations are unavailable.
+- Estimate body-relative depth without inventing a global Z trajectory.
+- Derive root horizontal/vertical motion from image observations.
+
+5.2 Skinned characters and calibration
+
+- Include an original procedural skinned humanoid and orbitable WebGL preview.
+- Import self-contained GLB or FBX models with a skinned armature.
+- Block external model resources and unsupported required compression decoders.
+- Normalize visible character height while preserving proportions/bind transforms.
+- Support automatic and manual humanoid mapping with hierarchy validation.
+- Preserve unmapped/intermediate bones and expose model-facing calibration.
+- Default to following captured anatomical directions, using the reference for
+  facing/root alignment; alternatively map a source reference onto model bind.
+- Keep vertical root movement when in-place mode removes horizontal travel.
+
+5.3 Animation and review exports
+
+- Export the animated character, skin, and baked motion as GLB.
+- Export an animated skeleton without mesh as BVH, with a Blender import helper.
+- Select a tracked time range and resample output to 24, 30, or 60 FPS.
+- Require explicit inclusion of uncertain-but-valid frames.
+- Reject invalid tracking and observation gaps longer than 250 ms, even when
+  uncertain-frame inclusion is enabled.
+- Save source-timed motion, target poses, flags, and settings in a 3D JSON archive.
+- Keep JSON distinct from a saved application project or a Blender scene.
+
+5.4 Demonstration and validation boundary
+
+- Provide a clearly labeled six-second synthetic landmark demonstration through
+  the actual 3D solver; it is not a recording or video-inference result.
+- Maintain generated BVH, GLB, and FBX interoperability checks for Blender.
+- Check imported timing, joint transforms, skinned vertices, mapping, and FK.
+- Document reproducible commands in docs/3D_WORKFLOW.md.
+
+Generated fixtures have passed actual headless Blender 5.1.1 checks with
+position/deformation errors below 0.000001 meters. This evidence applies to
+the tested fixtures. It does not establish support for every imported rig or
+replace end-to-end real-video validation of the new 3D browser integration.
+
+Prototype 03 acceptance boundary:
+The application can preview synthetic or analyzed body motion on a skinned
+humanoid, retain review metadata, and export Blender-interoperable animation.
+Global depth travel, reliable axial twist, IK/foot locking, facial/finger
+retargeting, project persistence, and OpenToonz export remain outside this stage.
+
+6. Next stage: motion cleanup and foot stabilization — planned
+
+6.1 Manual correction
 
 - Let users inspect and adjust uncertain joint or bone values over time.
 - Define correction ranges and interpolation behavior explicitly.
@@ -148,7 +206,7 @@ export an OpenToonz-importable animation package.
 - Keep reference-pose changes predictable when corrections exist.
 - Provide an undo/redo model appropriate for animation editing.
 
-5.2 Foot contacts and inverse kinematics
+6.2 Foot contacts and inverse kinematics
 
 - Review contact candidates against visible source motion.
 - Add editable contact intervals before treating a candidate as a constraint.
@@ -162,9 +220,9 @@ A short walking or squat sequence can be reviewed and corrected without
 unexplained foot sliding or bone-length changes. Occlusion and missed contacts
 must remain visible. Candidate detection alone does not satisfy this stage.
 
-6. Next stage: reusable projects and improved character preparation — planned
+7. Next stage: reusable projects and improved character preparation — planned
 
-6.1 Project persistence
+7.1 Project persistence
 
 - Define a versioned project format containing rig, artwork, calibration,
   source references, motion settings, corrections, and timeline state.
@@ -173,7 +231,7 @@ must remain visible. Candidate detection alone does not satisfy this stage.
 - Preserve schema migrations or provide clear version errors.
 - Make save/load round trips reproducible.
 
-6.2 Character editing
+7.2 Character editing
 
 - Improve joint placement, anchor editing, part visibility, and layer controls.
 - Make restoring a removed part and reverting edits straightforward.
@@ -186,9 +244,9 @@ Acceptance criteria:
 A character and its calibration can be saved, closed, reopened, and used with
 the same motion without losing artwork, anchors, assignments, or edit state.
 
-7. Next stage: export and OpenToonz interoperability — planned
+8. Next stage: 2D export and OpenToonz interoperability — planned
 
-7.1 Select an export contract
+8.1 Select an export contract
 
 - Verify OpenToonz's supported import formats against its official
   documentation and an installed target version.
@@ -199,7 +257,7 @@ the same motion without losing artwork, anchors, assignments, or edit state.
 - Separate a rendered animation export from an editable rig export.
 - Document the exact level of editability provided by each output.
 
-7.2 Build the exporter
+8.2 Build the exporter
 
 - Render deterministic frames at the selected output rate.
 - Preserve alpha and drawing order.
@@ -208,7 +266,7 @@ the same motion without losing artwork, anchors, assignments, or edit state.
 - Provide useful progress, cancellation, and error messages.
 - Package enough metadata and instructions to reproduce the import.
 
-7.3 Verify in OpenToonz
+8.3 Verify in OpenToonz
 
 - Import a real exported artifact into a clean OpenToonz scene.
 - Verify timing, frame count, transparency, canvas placement, and playback.
@@ -222,7 +280,7 @@ into the documented OpenToonz version, with correct timing and appearance.
 Canonical JSON alone does not satisfy this milestone. Do not advertise
 OpenToonz export before this end-to-end verification is complete.
 
-8. Later extensions — exploratory
+9. Later extensions — exploratory
 
 Detailed facial animation, finger articulation, additional character styles,
 multi-view motion, alternative tracking backends, and broader browser support
@@ -230,14 +288,16 @@ may be investigated after the core workflow is reliable. Each requires a
 specific scope, data model, dependency review, and acceptance test. These are
 not current feature commitments.
 
-9. Quality and release requirements
+10. Quality and release requirements
 
 - Keep application UI, error messages, source comments, and documentation in
   English.
 - Run the automated motion/sampling/rendering tests and production build.
 - Add tests for new behavior where they protect meaningful guarantees.
 - Exercise actual browser import, inference, cancellation, calibration, rig
-  editing, synchronized playback, and export workflows.
+  editing, synchronized playback, and export workflows in each affected tab.
+- Distinguish generated demonstrations and numerical interchange checks from
+  real-video browser verification; record tested Blender versions.
 - Verify desktop and narrow layouts, keyboard labels, and visible error states.
 - Use test media with documented permission to redistribute.
 - Keep private media, generated files, secrets, and dependency caches outside
@@ -251,10 +311,11 @@ The public repository should include setup instructions, an open-source
 license for original code, third-party notices, contribution guidance, a
 security-reporting policy, and reproducible automated checks.
 
-10. Work order
+11. Work order
 
-The recommended order after Prototype 02 is: improve motion review and foot
-stabilization; establish project persistence and stronger rig editing; define
-and implement the export contract; verify the result in OpenToonz; then expand
-animation detail and supported environments. A future release may adjust this
-order based on reproduced user issues and contributor feedback.
+The recommended order after Prototype 03 is: complete real-video 3D integration
+validation; improve motion review and foot stabilization; establish project
+persistence and stronger character editing; define and implement the 2D export
+contract; verify the result in OpenToonz; then expand animation detail and
+supported environments. A future release may adjust this order based on
+reproduced user issues and contributor feedback.

@@ -1,0 +1,32 @@
+.rig3d-panel { min-width: 0; }
+.rig3d-label { color: #879b97; font: 10px Consolas, monospace; margin-inline-start: 12px; max-width: 230px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rig3d-stage { position: relative; height: 520px; background: #12191c; isolation: isolate; }
+.rig3d-stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.rig3d-stage-note { position: absolute; bottom: 15px; left: 18px; right: 65px; color: #8b9e9c; font: 9px Consolas, monospace; pointer-events: none; line-height: 1.7; }
+.rig3d-axis { position: absolute; right: 18px; bottom: 16px; display: flex; gap: 8px; font: 10px Consolas, monospace; pointer-events: none; }
+.rig3d-axis span:nth-child(1) { color: #e09b99; }.rig3d-axis span:nth-child(2) { color: #b2e2bd; }.rig3d-axis span:nth-child(3) { color: #a4b8f1; }
+.rig3d-waiting, .rig3d-status { position: absolute; top: 17px; left: 18px; max-width: calc(100% - 36px); padding: 8px 11px; border: 1px solid #395247; background: #17241de8; color: #b9d2c1; font-size: 10px; pointer-events: none; }
+.rig3d-status { top: 45%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; white-space: nowrap; }
+.rig3d-review { border-color: #69573b; background: #2a251ce8; color: #d9c59f; }
+.rig3d-tools { display: flex; align-items: center; gap: 8px; padding: 14px 18px; border-top: 1px solid #303a3b; flex-wrap: wrap; }
+.rig3d-tools button, .rig3d-calibration button { background: #26322e; color: #c6dacf; border: 1px solid #40554a; border-radius: 4px; padding: 8px 11px; font-size: 11px; }
+.rig3d-tools button.rig3d-primary { background: #b6f5c8; color: #173024; border-color: #b6f5c8; font-weight: 600; }
+.rig3d-tools button:not(:disabled):hover, .rig3d-calibration button:hover { filter: brightness(1.12); }
+.rig3d-tools label { display: flex; align-items: center; gap: 5px; color: #9fb2a9; font-size: 11px; margin-inline-start: 5px; }
+.rig3d-tools input { accent-color: #b6f5c8; }
+.rig3d-info { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 10px 18px; border-top: 1px solid #303a3b; color: #91aaa0; font: 10px Consolas, monospace; }
+.rig3d-import-note { border-top: 1px solid #2c3934; color: #8ea197; font-size: 11px; line-height: 1.8; padding: 12px 18px; }
+.rig3d-export-range { color: #9dafac; font: 10px Consolas, monospace; padding: 0 18px 11px; }
+.rig3d-error { background: #352821; color: #edbda4; border-top: 1px solid #735440; font-size: 12px; padding: 14px 40px 14px 18px; line-height: 1.7; position: relative; }
+.rig3d-error button { position: absolute; top: 12px; right: 15px; background: none; border: 0; color: #e8b7a3; font-size: 18px; }
+.rig3d-disclosure { background: #1c2622; border: 0; border-top: 1px solid #34443c; color: #b8d1bf; font-size: 12px; width: 100%; text-align: start; display: flex; justify-content: space-between; padding: 14px 18px; }
+.rig3d-mapping-body { padding: 16px 18px; }
+.rig3d-mapping-body p { color: #81998b; font-size: 11px; line-height: 1.8; margin: 12px 0; }
+.rig3d-mapping-body p.rig3d-warning { color: #d7bb88; }
+.rig3d-calibration { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
+.rig3d-calibration label, .rig3d-map-grid label { display: flex; flex-direction: column; gap: 7px; color: #b4c7ba; font-size: 11px; min-width: 0; }
+.rig3d-calibration label { min-width: 200px; }.rig3d-calibration button { margin-bottom: 1px; }
+.rig3d-map-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 16px; margin-top: 20px; }
+.rig3d-map-grid select { font-size: 11px; padding: 8px; min-width: 0; }
+@media (max-width: 900px) { .rig3d-label { max-width: 150px; }.rig3d-map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 540px) { .rig3d-stage { height: 420px; }.rig3d-label { display: none; }.rig3d-map-grid { grid-template-columns: minmax(0, 1fr); }.rig3d-tools { padding: 12px; gap: 7px; }.rig3d-info { padding: 12px; }.rig3d-stage-note { font-size: 8px; }.rig3d-status { font-size: 10px; white-space: normal; width: max-content; } }

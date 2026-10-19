@@ -22,3 +22,6 @@ Thumbs.db
 .idea/
 coverage/
 *.tsbuildinfo
+__pycache__/
+*.py[cod]
+.pytest_cache/

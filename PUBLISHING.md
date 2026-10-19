@@ -1,6 +1,6 @@
 # Publishing the source on GitHub
 
-The source is prepared as Motion2D 0.2.0, an experimental prototype under MIT.
+The source is prepared as Motion2D 0.3.0, an experimental prototype under MIT.
 Repository metadata targets `adonisglobal/motion2d-web`. Preparing this checkout
 does not create or publish a remote repository.
 
@@ -30,7 +30,7 @@ initialized and committed Git repository:
 
 ```sh
 gh auth status
-gh repo create adonisglobal/motion2d-web --public --source=. --remote=origin --push --description "Experimental browser motion capture and PNG character animation studio"
+gh repo create adonisglobal/motion2d-web --public --source=. --remote=origin --push --description "Browser motion capture with independent Blender 3D and PNG 2D workspaces"
 ```
 
 Use a different owner/name only after updating the metadata in `package.json`
@@ -47,7 +47,8 @@ another repository or force-push its history.
   if a maintainer can monitor it. Follow `SECURITY.md` for reporting guidance.
 - Confirm source archives contain only intended files. Model/runtime downloads
   and developer test media must remain excluded.
-- Describe the release as an experimental prototype. OpenToonz export is planned;
+- Describe the release as an experimental prototype. Verify the separate 3D GLB
+  and BVH workflow in Blender. OpenToonz export is planned;
   canonical JSON is not an OpenToonz project or an importable animation package.
 
 This workflow does not publish a website, npm package, or binary release.

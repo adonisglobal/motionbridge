@@ -12,10 +12,10 @@ Please allow time for investigation and a fix before publishing detailed exploit
 
 ## Relevant behavior and boundaries
 
-- Selected video and PNG files are decoded by the browser. The application does not implement a media-upload service.
+- Selected video, PNG, GLB, and FBX files are parsed locally. The application does not implement a media-upload service. Model imports require embedded resources and block external texture/buffer URLs.
 - MediaPipe processes inputs on the device, but its package notice discloses performance and utilization metrics sent to Google. See the [README privacy information](README.md#privacy-and-network-behavior) and [third-party notices](THIRD_PARTY_NOTICES.md).
 - Initial dependency installation and model setup access external services. Keep the lockfile and use the documented setup commands.
-- Motion JSON includes the source filename and measured motion data. Review it before sharing it publicly.
+- Motion JSON includes the source filename and measured motion data. Animated GLB includes character artwork, skin, skeleton, and animation; BVH contains skeletal motion. Review exported files and redistribution rights before sharing them publicly.
 - The session is held in browser memory, and there is currently no project-account or cloud-storage system.
 
 For public hosting, use HTTPS, keep dependencies updated, preserve dependency notices, and review the behavior of any added hosting or analytics service. Report tracking inaccuracies, unsupported codecs, and ordinary visual defects through the normal bug-report process unless they also create a security impact.

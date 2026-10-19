@@ -1,6 +1,6 @@
 # Contributing to Motion2D
 
-Motion2D is an experimental 2D motion-capture and PNG-animation tool. Contributions that improve reproducibility, tracking review, rig editing, and clearly tested motion behavior are welcome.
+Motion2D is an experimental browser tool with a 3D/Blender workspace and an independent 2D/PNG workspace. Contributions that improve reproducibility, tracking review, rig editing, and clearly tested motion behavior are welcome.
 
 ## Set up a development environment
 
@@ -28,7 +28,10 @@ All user-facing text, comments, documentation, issues, and pull requests should 
 - Keep raw landmark measurements independent of cleaned and derived values.
 - Use timestamps for motion processing; do not assume the analysis rate is the source video's frame rate.
 - Preserve the target rig's proportions when retargeting motion.
+- Preserve quaternion continuity, model bind transforms, and intermediate bones in the 3D path. Do not infer a global depth trajectory from pelvis-relative landmarks.
+- Keep 2D and 3D sessions independent. In-place 3D motion removes horizontal travel while retaining vertical hips motion; this differs from the 2D root control.
 - Make missing observations and incomplete analysis visible rather than presenting them as confident tracking.
+- Keep generated demonstrations clearly labeled as synthetic. They do not prove real-video inference quality.
 - Release workers, media decoders, transferred image bitmaps, and object URLs when their work ends.
 - Keep heavy inference away from the interface thread.
 - Resolve model and runtime URLs from Vite's base so static subpath deployments work.
@@ -55,10 +58,12 @@ For changes affecting browser behavior, manually check the relevant parts of thi
 4. Choose a reference pose and verify source/character synchronization.
 5. Test the default rig and the character import/editing modes affected by the change.
 6. Confirm motion strength and in-place controls behave as labeled.
-7. Download JSON and verify its source metadata, reference, timestamps, and completion state.
-8. Check desktop and narrow layouts, keyboard focus, labels, and readable error messages.
+7. Download JSON and verify its source metadata, reference, timestamps, confidence, and completion state.
+8. For 3D changes, check facing, automatic/manual mapping, bind-pose mode, anatomical/reference calibration, and deformation on a permitted skinned model. Test GLB/BVH timing and geometry in Blender where affected; use the [reproducible fixture checks](docs/3D_WORKFLOW.md#reproduce-the-blender-checks) as a baseline.
+9. Confirm animation exports reject invalid tracking and long gaps. Including frames marked for review must remain an explicit choice; JSON should preserve uncertainty.
+10. Check desktop and narrow layouts, keyboard focus, labels, and readable error messages.
 
-State the commands and manual checks performed in the pull request. Describe any remaining limitation, especially where browser codecs or model quality affect the result. Do not claim OpenToonz compatibility before the exported artifact has been opened and checked in OpenToonz.
+State the commands and manual checks performed in the pull request. Distinguish generated-fixture tests from real-video browser tests and name the Blender version used for interoperability checks. Describe any remaining limitation, especially where browser codecs or model quality affect the result. Do not claim OpenToonz compatibility before the exported artifact has been opened and checked in OpenToonz.
 
 ## Review and communication
 
