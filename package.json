@@ -45,7 +45,7 @@
     "setup:assets": "node scripts/setup-assets.mjs"
   },
   "dependencies": {
-    "@mediapipe/tasks-vision": "1.1.1",
+    "@mediapipe/tasks-vision": "1.2.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "three": "0.186.1"
